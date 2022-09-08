@@ -13,6 +13,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @Path("films")
 public class FilmApi {
@@ -44,9 +45,21 @@ public class FilmApi {
         
     @DELETE
     @Path("/{id}")
-    public void delete(@PathParam("id") long id) {
+    public Response delete(@PathParam("id") long id) {
+      
+        Film filmToDelete = FilmDAO.findById(id);
+        System.out.println("filmToDelete: "+filmToDelete);
         
-      FilmDAO.deleteById(id);
+        if(filmToDelete == null){
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        else {
+             FilmDAO.deleteById(id);
+             return Response.status(200).build();
+        }
+        
+        
+     
     }
     
     @PUT
