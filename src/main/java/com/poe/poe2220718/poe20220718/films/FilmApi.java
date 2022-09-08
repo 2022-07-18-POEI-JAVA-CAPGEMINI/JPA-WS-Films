@@ -35,11 +35,13 @@ public class FilmApi {
     @POST
     @Consumes({ MediaType.APPLICATION_JSON})
     @Produces({ MediaType.APPLICATION_JSON})
-    public void postFilm(Film newFilm) {
+    public Response postFilm(Film newFilm) {
         
         System.out.println("objet reçue : "+newFilm);
         
         FilmDAO.create(newFilm);
+        
+        return Response.status(201).entity(newFilm).build();
     } 
     
         
@@ -65,9 +67,15 @@ public class FilmApi {
     @PUT
     @Path("/{id}")
     @Consumes({ MediaType.APPLICATION_JSON})
-    public void update(Film data, @PathParam("id") long id) {
+    public Response update(Film data, @PathParam("id") long id) {
       
-        FilmDAO.update(id, data);
+        try { // une meilleure solution aurait été de vérifier l'existence en BD
+            FilmDAO.update(id, data);
+            return Response.status(Response.Status.ACCEPTED).build();
+        }
+        catch(Exception e){
+            return Response.status(Response.Status.BAD_REQUEST).entity("<h1>ID inconnu</h1>").build();
+        }
     }
     
     /*
